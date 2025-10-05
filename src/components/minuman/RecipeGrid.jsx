@@ -2,7 +2,7 @@
 import { Clock, Star, ChefHat } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 
-export default function RecipeGrid({ recipes }) {
+export default function RecipeGrid({ recipes, onRecipeSelect }) {
 	const [visibleCards, setVisibleCards] = useState(new Set());
 	const cardRefs = useRef([]);
 
@@ -37,17 +37,11 @@ export default function RecipeGrid({ recipes }) {
 
 	return (
 		<section>
-			<h1 className="text-3xl md:text-5xl font-bold text-slate-800 text-center mb-4">
-				Jelajahi Resep Minuman
-			</h1>
-			<p className="text-center text-slate-500 max-w-2xl mx-auto mb-8">
-				Temukan minuman segar, hangat, dan kekinian. Mulai dari kopi hingga jus
-				buah, semua ada di sini.
-			</p>
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
 				{recipes.map((recipe, index) => (
 					<div
 						key={recipe.id}
+						onClick={() => onRecipeSelect(recipe)}
 						ref={(el) => (cardRefs.current[index] = el)}
 						className={`group transform transition-all duration-700 ${
 							visibleCards.has(index)

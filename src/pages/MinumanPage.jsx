@@ -1,30 +1,42 @@
 // src/pages/MinumanPage.jsx
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ResepMinuman } from "../data/minuman";
 import RecipeGrid from "../components/minuman/RecipeGrid";
 import SearchAndFilter from "../components/minuman/SearchAndFilter";
+import Pagination from "../components/common/Pagination";
 
-export default function MinumanPage() {
+export default function MinumanPage({ onRecipeSelect }) {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [filteredRecipes, setFilteredRecipes] = useState([]);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [recipesPerPage] = useState(6);
 
-	const allMinuman = Object.values(ResepMinuman.resep);
+	// Gunakan useMemo agar array ini tidak dibuat ulang setiap render
+	const allMinuman = useMemo(() => Object.values(ResepMinuman.resep), []);
 
 	useEffect(() => {
-		const filter = () => {
-			if (searchQuery.trim() === "") {
-				setFilteredRecipes(allMinuman);
-			} else {
-				const lowercasedQuery = searchQuery.toLowerCase();
-				const filtered = allMinuman.filter((recipe) =>
-					recipe.name.toLowerCase().includes(lowercasedQuery)
-				);
-				setFilteredRecipes(filtered);
-			}
-		};
+		const source =
+			searchQuery.trim() === ""
+				? allMinuman
+				: allMinuman.filter((recipe) =>
+						recipe.name.toLowerCase().includes(searchQuery.toLowerCase())
+				  );
+		setFilteredRecipes(source);
+		setCurrentPage(1); // Reset halaman saat pencarian berubah
+	}, [searchQuery, allMinuman]);
 
-		filter();
-	}, [searchQuery]);
+	// Logika untuk mendapatkan resep pada halaman saat ini
+	const indexOfLastRecipe = currentPage * recipesPerPage;
+	const indexOfFirstRecipe = indexOfLastRecipe - recipesPerPage;
+	const currentRecipes = filteredRecipes.slice(
+		indexOfFirstRecipe,
+		indexOfLastRecipe
+	);
+
+	const paginate = (pageNumber) => {
+		setCurrentPage(pageNumber);
+		window.scrollTo(0, 0); // <-- Tambahkan baris ini
+	};
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-cyan-50 pb-20 md:pb-8">
@@ -33,7 +45,15 @@ export default function MinumanPage() {
 					searchQuery={searchQuery}
 					setSearchQuery={setSearchQuery}
 				/>
-				<RecipeGrid recipes={filteredRecipes} />
+				<RecipeGrid recipes={currentRecipes} onRecipeSelect={onRecipeSelect} />
+				{filteredRecipes.length > recipesPerPage && (
+					<Pagination
+						recipesPerPage={recipesPerPage}
+						totalRecipes={filteredRecipes.length}
+						paginate={paginate}
+						currentPage={currentPage}
+					/>
+				)}
 			</main>
 		</div>
 	);

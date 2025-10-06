@@ -2,10 +2,10 @@
 import { useState } from "react";
 import SplashScreen from "./pages/SplashScreen";
 import HomePage from "./pages/HomePage";
-import MakananPage from "./pages/MakananPage";
-import MinumanPage from "./pages/MinumanPage";
+import ResepPage from "./pages/ResepPage";
+import FavoritePage from "./pages/FavoritePage";
 import ProfilePage from "./pages/ProfilePage";
-import DetailPage from "./pages/DetailPage"; // <-- Tambahkan import ini
+import DetailPage from "./pages/DetailPage";
 import DesktopNavbar from "./components/navbar/DesktopNavbar";
 import MobileNavbar from "./components/navbar/MobileNavbar";
 import PWABadge from "./PWABadge";
@@ -13,38 +13,36 @@ import PWABadge from "./PWABadge";
 export default function App() {
 	const [showSplash, setShowSplash] = useState(true);
 	const [currentPage, setCurrentPage] = useState("home");
-	const [selectedRecipe, setSelectedRecipe] = useState(null); // <-- Tambahkan state ini
+	const [selectedRecipe, setSelectedRecipe] = useState(null);
 
 	const handleSplashComplete = () => {
 		setShowSplash(false);
 	};
 
 	const handleNavigation = (page) => {
-		setSelectedRecipe(null); // Reset resep saat pindah halaman
+		setSelectedRecipe(null);
 		setCurrentPage(page);
 	};
 
 	const handleRecipeSelect = (recipe) => {
-		setSelectedRecipe(recipe); // Set resep yang dipilih
+		setSelectedRecipe(recipe);
 	};
 
 	const handleBackToList = () => {
-		setSelectedRecipe(null); // Kembali ke daftar resep
+		setSelectedRecipe(null);
 	};
 
 	const renderCurrentPage = () => {
-		// Jika ada resep yang dipilih, tampilkan halaman detail
 		if (selectedRecipe) {
 			return <DetailPage recipe={selectedRecipe} onBack={handleBackToList} />;
 		}
-		// Jika tidak, tampilkan halaman sesuai navigasi
 		switch (currentPage) {
 			case "home":
 				return <HomePage onRecipeSelect={handleRecipeSelect} />;
-			case "makanan":
-				return <MakananPage onRecipeSelect={handleRecipeSelect} />;
-			case "minuman":
-				return <MinumanPage onRecipeSelect={handleRecipeSelect} />;
+			case "resep":
+				return <ResepPage onRecipeSelect={handleRecipeSelect} />;
+			case "favorite":
+				return <FavoritePage onRecipeSelect={handleRecipeSelect} />;
 			case "profile":
 				return <ProfilePage />;
 			default:

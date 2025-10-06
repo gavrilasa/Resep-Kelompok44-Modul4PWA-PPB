@@ -1,19 +1,55 @@
 // src/pages/DetailPage.jsx
-import { ArrowLeft, ChefHat, Clock } from "lucide-react";
+import { ArrowLeft, ChefHat, Clock, Star } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function DetailPage({ recipe, onBack }) {
-	const isMakanan = recipe.image_url.includes("unsplash") || recipe.id <= 10;
+	const [isFavorite, setIsFavorite] = useState(false);
+
+	useEffect(() => {
+		const favorites = JSON.parse(localStorage.getItem("favoriteRecipes")) || [];
+		const isFav = favorites.some(
+			(fav) => fav.id === recipe.id && fav.type === recipe.type
+		);
+		setIsFavorite(isFav);
+	}, [recipe]);
+
+	const toggleFavorite = () => {
+		let favorites = JSON.parse(localStorage.getItem("favoriteRecipes")) || [];
+		if (isFavorite) {
+			favorites = favorites.filter(
+				(fav) => !(fav.id === recipe.id && fav.type === recipe.type)
+			);
+		} else {
+			favorites.push(recipe);
+		}
+		localStorage.setItem("favoriteRecipes", JSON.stringify(favorites));
+		setIsFavorite(!isFavorite);
+	};
+
+	const isMakanan = recipe.type === "makanan";
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 pb-20 md:pb-8 animate-fade-in">
 			<main className="max-w-4xl mx-auto px-4 md:px-8 py-8 md:py-12">
-				<button
-					onClick={onBack}
-					className="flex items-center space-x-2 text-slate-600 hover:text-blue-600 font-medium mb-6 transition-colors duration-200"
-				>
-					<ArrowLeft size={20} />
-					<span>Kembali</span>
-				</button>
+				<div className="flex justify-between items-center mb-6">
+					<button
+						onClick={onBack}
+						className="flex items-center space-x-2 text-slate-600 hover:text-blue-600 font-medium transition-colors duration-200"
+					>
+						<ArrowLeft size={20} />
+						<span>Kembali</span>
+					</button>
+					<button
+						onClick={toggleFavorite}
+						className="flex items-center space-x-2 text-slate-600 hover:text-yellow-500 font-medium transition-colors duration-200"
+					>
+						<Star
+							size={20}
+							className={isFavorite ? "fill-current text-yellow-500" : ""}
+						/>
+						<span>{isFavorite ? "Favorit" : "Tambah Favorit"}</span>
+					</button>
+				</div>
 
 				<div className="bg-white/50 backdrop-blur-xl border border-white/30 rounded-2xl md:rounded-3xl shadow-xl shadow-blue-500/5 overflow-hidden">
 					<div className="relative h-56 md:h-96">

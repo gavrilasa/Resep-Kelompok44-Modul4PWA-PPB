@@ -1,11 +1,11 @@
-// src/components/DesktopNavbar.jsx
+// src/components/navbar/DesktopNavbar.jsx
 import logoUrl from "../../assets/LOGORN.png";
 
 export default function DesktopNavbar({ currentPage, onNavigate }) {
 	const navItems = [
 		{ id: "home", label: "Beranda" },
-		{ id: "makanan", label: "Makanan" },
-		{ id: "minuman", label: "Minuman" },
+		{ id: "resep", label: "Resep" },
+		{ id: "favorite", label: "Favorit" },
 		{ id: "profile", label: "Profile" },
 	];
 
